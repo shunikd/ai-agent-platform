@@ -1,0 +1,22 @@
+agent:
+  id: "agent_builder"
+  name: "エージェント作成支援ウィザード"
+  description: "非エンジニアが日本語チャットで対話しながら新規エージェントを作成できるウィザード（FR-018）"
+  enabled: true
+
+access_control:
+  allowed_roles: ["Admin", "PowerUser"]
+
+models:
+  default: "amazon-bedrock/openai.gpt-oss-120b-1:0"
+
+workflow:
+  type: "single"
+  steps:
+    - id: "wizard"
+      role: "planner"
+      prompt_file: "system_prompt.md"
+      tools: []
+
+tools:
+  mcp_servers: []

@@ -1,0 +1,23 @@
+agent:
+  id: "knowledge_qa"
+  name: "ナレッジQAエージェント"
+  description: "社内ナレッジ検索を行うエージェント"
+  enabled: true
+access_control:
+  allowed_roles: ["Admin", "PowerUser", "User"]
+models:
+  default: "amazon-bedrock/openai.gpt-oss-120b-1:0"
+workflow:
+  type: "single"
+  steps:
+    - id: "search"
+      role: "planner"
+      prompt_file: "prompts/planner.md"
+      tools: ["dify_search"]
+      # For simplicity we just call dify_search directly.
+
+tools:
+  mcp_servers:
+    - name: "dify-mcp"
+      allowed_tools: ["dify_search"]
+      config: {}

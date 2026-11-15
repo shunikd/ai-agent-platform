@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+PyYAML
+requests
+boto3
+strands-agents
+litellm
+pytest

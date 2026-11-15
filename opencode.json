@@ -1,0 +1,11 @@
+{
+  "$schema": "https://opencode.ai",
+  "model": "amazon-bedrock/openai.gpt-oss-120b-1:0",
+  "provider": {
+    "amazon-bedrock": {
+      "options": {
+        "region": "ap-northeast-1"
+      }
+    }
+  }
+}

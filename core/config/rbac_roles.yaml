@@ -1,0 +1,19 @@
+# Role-Based Access Control definitions (Phase 1 minimal set)
+
+roles:
+  Admin:
+    description: "Full access, can use all agents and tools"
+    allowed_agents: ["*"]
+    allowed_tools: ["*"]
+  PowerUser:
+    description: "Can use knowledge agents and most tools"
+    allowed_agents: ["knowledge_qa", "code_reviewer"]
+    allowed_tools: ["dify_search", "file_read", "file_write"]
+  User:
+    description: "Limited access, read‑only agents"
+    allowed_agents: ["knowledge_qa"]
+    allowed_tools: ["dify_search"]
+  Guest:
+    description: "Very limited, only chat without tool usage"
+    allowed_agents: []
+    allowed_tools: []

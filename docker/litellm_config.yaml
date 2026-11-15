@@ -1,0 +1,36 @@
+# ------------------------------------------------------------------
+# litellm_config.yaml  –  LiteLLM プロキシ設定
+# ------------------------------------------------------------------
+# ローカル LLM (vLLM / Ollama) を主とし、必要に応じて
+# Amazon Bedrock 等のクラウド LLM へ切り替えられるよう定義する。
+# ------------------------------------------------------------------
+
+model_list:
+  # ローカル vLLM エンドポイント (閉塞NW内 GPU サーバー)
+  - model_name: "local-gpt-oss-120b"
+    litellm_params:
+      model: "openai/local-gpt-oss-120b"
+      api_base: "http://vllm-server:8080/v1"
+      api_key: "dummy"
+
+  - model_name: "local-qwen-coder-32b"
+    litellm_params:
+      model: "openai/local-qwen-coder-32b"
+      api_base: "http://vllm-server:8080/v1"
+      api_key: "dummy"
+
+  # Amazon Bedrock (自宅検証環境 / 将来のクラウド移行用)
+  - model_name: "amazon-bedrock/openai.gpt-oss-120b-1:0"
+    litellm_params:
+      model: "bedrock/openai.gpt-oss-120b-1:0"
+      aws_region_name: "ap-northeast-1"
+
+litellm_settings:
+  # タイムアウトを十分長く設定 (NFR-001)
+  request_timeout: 600
+  # テレメトリ無効化
+  telemetry: false
+
+general_settings:
+  # 同時リクエスト数を制限してローカル GPU リソースを保護 (NFR-001)
+  max_parallel_requests: 4

@@ -1,0 +1,17 @@
+agent:
+  id: "template-agent"
+  name: "テンプレートエージェント"
+  description: "開発者が新規エージェントを作成する際の雛形"
+  enabled: true
+access_control:
+  allowed_roles: ["Admin", "PowerUser"]
+models:
+  default: "openai.gpt-oss-120b-1:0"
+workflow:
+  type: "single"
+  steps: []
+tools:
+  mcp_servers:
+    - name: "dify-mcp"
+      allowed_tools: ["dify_search"]
+      config: {}

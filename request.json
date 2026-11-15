@@ -1,0 +1,1 @@
+{ "model": "knowledge_qa", "messages": [ { "role": "user", "content": "社内の有給休暇の取得手順は？" } ] }

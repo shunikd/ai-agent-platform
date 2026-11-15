@@ -1,0 +1,9 @@
+# System-wide configuration for Phase 1
+
+timeout_seconds: 60  # default request timeout for external calls
+token_limit_ratio: 0.8  # max token usage as fraction of model limit
+
+# LiteLLM configuration placeholder (not used in this minimal prototype)
+lite_llm:
+  api_base: "http://localhost:8000"
+  api_key: "dummy"

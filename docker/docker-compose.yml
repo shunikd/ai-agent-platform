@@ -1,0 +1,73 @@
+version: "3.9"
+
+services:
+  # ------------------------------------------------------------------
+  # AI Agent Platform  本体
+  # ------------------------------------------------------------------
+  ai-agent-platform:
+    image: ai-agent-platform:latest
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: ai-agent-platform
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-8000}:8000"
+    environment:
+      # テレメトリ無効化 (NFR-002)
+      STRANDS_DISABLE_TELEMETRY: "true"
+      DO_NOT_TRACK: "1"
+      ANONYMIZED_TELEMETRY: "false"
+      HF_HUB_OFFLINE: "1"
+      TRANSFORMERS_OFFLINE: "1"
+      TIKTOKEN_CACHE_DIR: /app/cache/tiktoken
+      # LiteLLM プロキシ接続先
+      LITELLM_BASE_URL: "http://litellm:4000"
+      LITELLM_API_KEY: "${LITELLM_API_KEY:-dummy}"
+      # MCP サーバー (Dify)
+      DIFY_MCP_URL: "${DIFY_MCP_URL:-http://mock-dify-mcp:8001/mcp}"
+      # DB
+      DB_PATH: /app/data/data.db
+    volumes:
+      # agents/ をホット‑リロード対応でマウント (NFR-004)
+      - ../agents:/app/agents:ro
+      # 永続化 DB・ログ
+      - ../data:/app/data
+    depends_on:
+      - litellm
+      - mock-dify-mcp
+    networks:
+      - agent-net
+
+  # ------------------------------------------------------------------
+  # LiteLLM プロキシ  (ローカル LLM / vLLM / Ollama へのゲートウェイ)
+  # ------------------------------------------------------------------
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: litellm
+    restart: unless-stopped
+    ports:
+      - "${LITELLM_PORT:-4000}:4000"
+    volumes:
+      - ./litellm_config.yaml:/app/config.yaml:ro
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    networks:
+      - agent-net
+
+  # ------------------------------------------------------------------
+  # Mock Dify MCP サーバー  (検証用)
+  # 本番環境では下記コメントアウトし、DIFY_MCP_URL を実際のエンドポイントへ変更する
+  # ------------------------------------------------------------------
+  mock-dify-mcp:
+    image: ai-agent-platform:latest   # 同一イメージ内のモジュールを利用
+    container_name: mock-dify-mcp
+    restart: unless-stopped
+    ports:
+      - "${MOCK_MCP_PORT:-8001}:8001"
+    command: ["python", "mock_servers/dify_mcp.py"]
+    networks:
+      - agent-net
+
+networks:
+  agent-net:
+    driver: bridge

@@ -1,0 +1,28 @@
+agent:
+  id: "code_reviewer"
+  name: "コードレビューエージェント"
+  description: "コード生成後にレビューを行うエージェント"
+  enabled: true
+access_control:
+  allowed_roles: ["Admin", "PowerUser"]
+models:
+  default: "amazon-bedrock/openai.gpt-oss-120b-1:0"
+workflow:
+  type: "loop"
+  max_iterations: 2
+  steps:
+    - id: "execute"
+      role: "executor"
+      prompt_file: "prompts/executor.md"
+      tools: []
+    - id: "review"
+      role: "reviewer"
+      prompt_file: "prompts/reviewer.md"
+      tools: []
+      condition:
+        on_reject_goto: "execute"
+tools:
+  mcp_servers:
+    - name: "dify-mcp"
+      allowed_tools: []
+      config: {}
